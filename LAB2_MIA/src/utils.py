@@ -1,7 +1,7 @@
 """Shared helpers: project paths, image loading, ROI handling, plotting and export."""
 import random
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
@@ -87,6 +87,17 @@ def roi_dimensions(roi: ROI) -> Tuple[int, int, int]:
     ymin, ymax, xmin, xmax = roi
     height, width = ymax - ymin, xmax - xmin
     return height, width, height * width
+
+
+def to_roi_coords(points: Sequence[Tuple[int, int]], roi: ROI) -> List[Tuple[int, int]]:
+    """Convert (row, col) points from full-image coordinates to ROI coordinates (checks they fall inside)."""
+    ymin, ymax, xmin, xmax = roi
+    out = []
+    for r, c in points:
+        if not (ymin <= r < ymax and xmin <= c < xmax):
+            raise ValueError(f"Point {(r, c)} is outside the ROI {roi}")
+        out.append((int(r - ymin), int(c - xmin)))
+    return out
 
 
 def plot_roi_overview(img: np.ndarray, roi: ROI, title: str = ""):
