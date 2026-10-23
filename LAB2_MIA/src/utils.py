@@ -4,7 +4,7 @@ SKELETON: only the paths are defined. Implement each function (TODO).
 """
 import random
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
@@ -56,6 +56,17 @@ def crop_roi(img: np.ndarray, roi: ROI) -> np.ndarray:
 def roi_dimensions(roi: ROI) -> Tuple[int, int, int]:
     """Return (height, width, N_ROI) with N_ROI = number of pixels of the ROI."""
     raise NotImplementedError
+
+
+def to_roi_coords(points: Sequence[Tuple[int, int]], roi: ROI) -> List[Tuple[int, int]]:
+    """Convert (row, col) points from full-image coordinates to ROI coordinates (checks they fall inside)."""
+    ymin, ymax, xmin, xmax = roi
+    out = []
+    for r, c in points:
+        if not (ymin <= r < ymax and xmin <= c < xmax):
+            raise ValueError(f"Point {(r, c)} is outside the ROI {roi}")
+        out.append((int(r - ymin), int(c - xmin)))
+    return out
 
 
 def plot_roi_overview(img: np.ndarray, roi: ROI, title: str = ""):
