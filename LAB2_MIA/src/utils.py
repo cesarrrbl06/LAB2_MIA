@@ -2,10 +2,17 @@
 
 SKELETON: only the paths are defined. Implement each function (TODO).
 """
+import random
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import nrrd
 import numpy as np
+import pandas as pd
+from skimage.io import imread
+from skimage.util import img_as_float
 
 # --------------------------------------------------------------------------- #
 # Project paths (relative to the project root, independent of the working dir)
