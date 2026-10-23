@@ -117,12 +117,15 @@ def plot_roi_overview(img: np.ndarray, roi: ROI, title: str = ""):
     return fig
 
 
-def show_overlays(img: np.ndarray, masks: Dict[str, np.ndarray], gt: Optional[np.ndarray] = None):
+def show_overlays(img: np.ndarray, masks: Dict[str, np.ndarray], gt: Optional[np.ndarray] = None,
+                  title: str = ""):
     """Grid with the image and the contour of each mask (and of the ground truth, if given)."""
     n = len(masks) + 1
     ncols = min(n, 4)
     nrows = int(np.ceil(n / ncols))
-    fig, axes = plt.subplots(nrows, ncols, figsize=(4 * ncols, 4 * nrows), squeeze=False)
+    aspect = float(np.clip(img.shape[1] / img.shape[0], 0.4, 2.5))  # width / height of each panel
+    fig, axes = plt.subplots(nrows, ncols, figsize=(4 * aspect * ncols, 4 * nrows + (0.4 if title else 0)),
+                             squeeze=False, layout="constrained")
     axes = axes.ravel()
     axes[0].imshow(img, cmap="gray")
     axes[0].set_title("Image")
@@ -139,7 +142,8 @@ def show_overlays(img: np.ndarray, masks: Dict[str, np.ndarray], gt: Optional[np
         ax.set_title(name)
     for ax in axes:
         ax.axis("off")
-    fig.tight_layout()
+    if title:
+        fig.suptitle(title)
     return fig
 
 
