@@ -11,7 +11,7 @@ import numpy as np
 # Project paths (relative to the project root, independent of the working dir)
 # --------------------------------------------------------------------------- #
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DATA_RAW = PROJECT_ROOT / "data" / "raw"
+DATA_RAW = PROJECT_ROOT / "raw_images"
 DATA_GT = PROJECT_ROOT / "data" / "ground_truth"
 RESULTS_DIR = PROJECT_ROOT / "results"
 RESULTS_FIGURES = RESULTS_DIR / "figures"

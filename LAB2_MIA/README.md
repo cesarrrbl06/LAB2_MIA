@@ -11,10 +11,11 @@ Thresholding, region growing, watershed, active contours (snakes) and one additi
 ```text
 LAB2_MIA/
 │
+├── raw_images/                        # Original images (reuse the Lab 1 images)
+│   ├── Brain_MRI_131749_T1.png        # T1-weighted Brain MRI
+│   └── Chest_Xray_PA_3-8-2010.png    # Posteroanterior (PA) Chest X-ray
+│
 ├── data/
-│   ├── raw/                           # Original images (reuse the Lab 1 images)
-│   │   ├── Brain_MRI_131749_T1.png    # T1-weighted Brain MRI
-│   │   └── Chest_Xray_PA_3-8-2010.png # Posteroanterior (PA) Chest X-ray
 │   └── ground_truth/                  # Manual segmentations (3D Slicer .seg.nrrd or Paint .png)
 │
 ├── notebooks/
@@ -71,6 +72,6 @@ pip install -r requirements.txt
 `.zip` named `P2_MIA_BED_26_27_GroupX.zip` (e.g. `P2_MIA_BED_26_27_G2_1.zip`) containing:
 1. Single PDF report (max. 10 pages) with the contribution of each member and the AI disclosure.
 2. Source code (`src/`, `notebooks/`, `main.py`).
-3. Images used (`data/raw/`, and `data/ground_truth/`).
+3. Images used (`raw_images/`, and `data/ground_truth/`).
 
 Deadline: **Nov 5, 2026 23:55** (G1_x) / **Nov 6, 2026 23:55** (G2_x).

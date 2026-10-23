@@ -11,7 +11,7 @@ from src import (active_contours, advanced_methods, export_seg, metrics,  # noqa
 
 def main() -> None:
     # TODO 1. utils.set_seed / utils.ensure_dirs
-    # TODO 2. load one image from data/raw and crop a ROI
+    # TODO 2. load one image from raw_images and crop a ROI
     # TODO 3. run thresholding, region growing, watershed, snakes and the Part 3 method
     # TODO 4. compute the metrics table against a ground truth (if available)
     # TODO 5. embed the mask in the original dimensions and write/read a .seg.nrrd (temp folder)
