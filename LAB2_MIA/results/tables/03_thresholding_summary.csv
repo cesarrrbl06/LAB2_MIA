@@ -1,7 +1,0 @@
-Image,Method,T,Region size (px),% of ROI,Connected components,All FG seeds inside,BG seeds inside
-brain,Thresholding (Otsu),0.309,3486,45.57,10,True,1
-brain,Thresholding (Multi-Otsu),0.197,390,5.1,3,True,0
-brain,Thresholding (Manual),0.14,277,3.62,1,True,0
-chest,Thresholding (Otsu),0.423,953075,67.62,1257,True,0
-chest,Thresholding (Multi-Otsu),0.321,665959,47.25,1577,True,0
-chest,Thresholding (Manual),0.38,856145,60.75,1350,True,0
