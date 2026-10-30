@@ -1,6 +1,6 @@
 """Ground-truth reading and .seg.nrrd export (3D Slicer compatible) with pynrrd."""
 from pathlib import Path
-from typing import Tuple
+from typing import Optional, Tuple
 
 import nrrd
 import numpy as np
@@ -10,24 +10,43 @@ from skimage.io import imread
 from .utils import ROI
 
 
-def read_mask(path: Path, flip_rows: bool = False) -> np.ndarray:
-    """Read a manual segmentation (.seg.nrrd from 3D Slicer or .png from Paint) as a 2-D bool mask.
+def read_mask(path: Path, reference_shape: Optional[Tuple[int, int]] = None,
+              flip_rows: bool = False) -> np.ndarray:
+    """Read a manual segmentation (.nrrd / .seg.nrrd from 3D Slicer or .png from Paint) as a 2-D bool mask.
 
-    nrrd stores [x, y] -> transposed to [row, col]. Set ``flip_rows=True`` if the mask looks
-    vertically mirrored (Slicer may store 2-D images upside down).
+    nrrd stores [x, y] -> [row, col]. 3D Slicer may export only the bounding box of the segment, with
+    its position in ``space origin`` / ``space directions``. Pass ``reference_shape`` (shape of the
+    original image) to place the mask in the pixel grid of that image using this geometry; it assumes
+    the image was loaded in Slicer with the default geometry of a PNG (origin 0, spacing 1).
+    Set ``flip_rows=True`` if the mask looks vertically mirrored.
     """
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"Mask not found: {path}")
     if path.name.endswith(".nrrd"):
         data, header = nrrd.read(str(path))
+        directions = np.asarray(header.get("space directions", np.eye(data.ndim)), dtype=float)
         kinds = [str(k).lower() for k in header.get("kinds", [])]
         if data.ndim == 4 or (kinds and kinds[0] in ("list", "vector")):
             data = (data > 0).any(axis=0)  # several layers -> union
-        data = np.squeeze(data)
-        if data.ndim == 3:  # [x, y, z] with several slices -> union along z
+            directions = directions[1:]    # first axis was not spatial
+        data = data > 0
+        if data.ndim == 3:  # [x, y, z] -> union along z (a 2-D image has a single slice)
             data = data.any(axis=-1)
-        mask = data.T > 0
+        if reference_shape is None:
+            mask = data.T
+        else:
+            origin = np.asarray(header.get("space origin", np.zeros(3)), dtype=float)[:2]
+            i, j = np.nonzero(data)
+            xy = origin + np.outer(i, directions[0, :2]) + np.outer(j, directions[1, :2])
+            cols, rows = np.rint(xy[:, 0]).astype(int), np.rint(xy[:, 1]).astype(int)
+            n_rows, n_cols = reference_shape
+            inside = (rows >= 0) & (rows < n_rows) & (cols >= 0) & (cols < n_cols)
+            if not inside.all():
+                raise ValueError(f"{path.name}: {np.sum(~inside)} mask pixels fall outside an image of "
+                                 f"shape {reference_shape}; check the reference image used in Slicer")
+            mask = np.zeros(reference_shape, dtype=bool)
+            mask[rows, cols] = True
     else:
         img = np.squeeze(imread(str(path)))
         if img.ndim == 3:
@@ -35,6 +54,8 @@ def read_mask(path: Path, flip_rows: bool = False) -> np.ndarray:
                 img = rgba2rgb(img)
             img = rgb2gray(img)
         mask = img > (img.max() / 2 if img.max() > 0 else 0)
+        if reference_shape is not None and mask.shape != tuple(reference_shape):
+            raise ValueError(f"{path.name}: mask shape {mask.shape} != image shape {tuple(reference_shape)}")
     if flip_rows:
         mask = mask[::-1, :]
     return np.ascontiguousarray(mask, dtype=bool)
