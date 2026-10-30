@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 import nrrd
 import numpy as np
 from skimage.color import rgb2gray, rgba2rgb
-from skimage.io import imread
+from skimage.io import imread, imsave
 
 from .utils import ROI
 
@@ -59,6 +59,14 @@ def read_mask(path: Path, reference_shape: Optional[Tuple[int, int]] = None,
     if flip_rows:
         mask = mask[::-1, :]
     return np.ascontiguousarray(mask, dtype=bool)
+
+
+def write_mask_png(mask: np.ndarray, path: Path) -> Path:
+    """Save a binary mask as an 8-bit PNG (0 = background, 255 = structure)."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    imsave(str(path), np.asarray(mask, dtype=bool).astype(np.uint8) * 255, check_contrast=False)
+    return path
 
 
 def embed_roi_mask(mask_roi: np.ndarray, full_shape: Tuple[int, int], roi: ROI) -> np.ndarray:
