@@ -1,0 +1,6 @@
+Pre-processing,Thresholding,Region growing,Watershed
+None (original),0.998,0.998,0.964
+Gaussian filter (sigma = 2),0.986,0.987,0.977
+Median filter (radius = 3),0.986,0.986,0.969
+CLAHE,0.991,0.991,0.966
+Histogram equalization,0.946,0.995,0.594

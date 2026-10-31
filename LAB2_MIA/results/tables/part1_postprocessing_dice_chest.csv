@@ -1,0 +1,4 @@
+Method,Dice before,Best opening radius,Dice after
+Thresholding,0.911,30,0.934
+Region growing,0.919,1,0.92
+Watershed,0.965,30,0.968
