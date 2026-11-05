@@ -1,71 +1,63 @@
 # LAB 2 — Medical Image Segmentation (MIA)
 
 Medical Image Analysis · Biomedical Engineering · URJC 2026/2027.
-Thresholding, region growing, watershed, active contours (snakes) and one additional method.
-
-> **Status:** project skeleton. `src/` contains function signatures with `NotImplementedError`,
-> and `notebooks/LAB_2.ipynb` contains the section outline only (no code).
+Thresholding, region growing, watershed, active contours (snakes) and Chan-Vese, applied to a brain MRI
+lesion and to the right lung of a chest X-ray, and evaluated against manual segmentations made in 3D Slicer.
 
 ## 📁 Project Structure
 
 ```text
 LAB2_MIA/
 │
-├── raw_images/                        # Original images (reuse the Lab 1 images)
+├── raw_images/                        # Original images (the Lab 1 images)
 │   ├── Brain_MRI_131749_T1.png        # T1-weighted Brain MRI
-│   └── Chest_Xray_PA_3-8-2010.png    # Posteroanterior (PA) Chest X-ray
+│   └── Chest_Xray_PA_3-8-2010.png     # Posteroanterior (PA) Chest X-ray
 │
 ├── data/
-│   └── ground_truth/                  # Manual segmentations (3D Slicer .seg.nrrd or Paint .png)
+│   └── ground_truth/                  # Manual segmentations from 3D Slicer (.nrrd) and binary masks (.png)
 │
 ├── notebooks/
-│   └── LAB_2.ipynb                    # Main notebook (11 sections, English)
+│   └── LAB_2.ipynb                    # Main notebook: all the experiments, tables and figures
 │
-├── src/                               # Modular Python package
-│   ├── __init__.py
+├── src/                               # Python package used by the notebook
 │   ├── utils.py                       # Paths, image loading, ROI handling, figure/table saving
 │   ├── preprocessing.py               # Filtering, histogram modifications, morphological post-processing
-│   ├── thresholding.py                # Otsu / multi-Otsu / manual thresholding
+│   ├── thresholding.py                # Otsu and manual thresholding
 │   ├── region_growing.py              # Region growing (4- and 8-connectivity)
 │   ├── watershed_seg.py               # Gradient map, markers, marker-controlled watershed
-│   ├── active_contours.py             # Snakes (initial curve, evolution, mask)
-│   ├── advanced_methods.py            # Part 3: additional method of your choice
+│   ├── active_contours.py             # Snakes (initial ellipse, evolution, mask)
+│   ├── advanced_methods.py            # Part 3: Chan-Vese
 │   ├── metrics.py                     # Dice, Hausdorff, SSIM and comparison table
-│   └── export_seg.py                  # Read ground truth, embed ROI, write .seg.nrrd
+│   └── export_seg.py                  # Reading of the 3D Slicer segmentations, binary masks
 │
 ├── results/
-│   ├── figures/                       # Exported plots for the report (300 DPI)
-│   ├── tables/                        # CSVs (e.g. 02_segmentation_metrics_summary.csv)
-│   └── segmentations/                 # Final .seg.nrrd files
+│   ├── figures/                       # Figures saved by the notebook (300 DPI), also used in the report
+│   └── tables/                        # Tables saved by the notebook (CSV)
 │
 ├── report/
-│   ├── Lab_2_MIA.pdf                  # Official assignment prompt
-│   └── (Final Report PDF)             # Final report (max. 10 pages)
+│   └── Lab_2_MIA.pdf                  # Assignment
 │
-├── main.py                            # End-to-end pipeline verification script
-├── requirements.txt                   # Environment dependencies
+├── main.py                            # Quick check: every method with its best parameters (~20 s)
+├── requirements.txt
 └── README.md
 ```
 
-## 🚀 Installation
+## 🚀 Usage
 
 ```bash
 pip install -r requirements.txt
+python main.py                     # metrics of every method with the best parameters
+jupyter notebook notebooks/LAB_2.ipynb   # run all the cells (about 6 minutes)
 ```
 
 ## 📓 Notebook sections
 
-1. Environment Setup & Project Verification
-2. Clinical Data Loading & ROI Definition
-3. Thresholding
-4. Region Growing
-5. Watershed
-6. Active Contours (Snakes)
-7. Pre- and Post-Processing *(added: required by the assignment)*
-8. Part 3 — Additional Method *(added: required by the assignment)*
-9. Ground Truth Integration & Quantitative Evaluation (DSC, Hausdorff, SSIM)
-10. Exporting to `.seg.nrrd`
-11. Team Contributions & AI Disclosure *(added: required by the assignment)*
+* **Part 1** — 1.1 Images and ROIs · 1.2 Reference segmentations · 1.3 Thresholding · 1.4 Region growing ·
+  1.5 Watershed · 1.6a Pre-processing · 1.6b Post-processing
+* **Part 2** — 2.1 Snake model · 2.2 Initial contour · 2.3 Influence of α and β · 2.4 Influence of σ and scale ·
+  2.5 Sensitivity to the initial contour · 2.6 Comparison with Part 1
+* **Part 3** — 3.1 State of the art and Chan-Vese · 3.2 Initial level set · 3.3 Influence of μ and λ1 ·
+  3.4 Robustness (initial contour and noise) · 3.5 Final comparison of all the methods
 
 ## 📦 Final Submission Format
 
