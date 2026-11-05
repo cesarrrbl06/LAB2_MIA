@@ -111,12 +111,8 @@ save(fig, "fig3_region_growing.png")
 
 # ---------------------------------- Fig 4: watershed ------------------------------------------- #
 ws_masks = {}
-fig, axes = plt.subplots(1, 4, figsize=(13, 3.8), gridspec_kw={"width_ratios": [1, 1, 0.6, 0.6]})
-labels, n = watershed_seg.watershed_oversegmentation(data["brain"]["roi"])
-axes[0].imshow(labels % 20, cmap="tab20")
-axes[0].set_title(f"Brain MRI: no markers ({n} regions)")
-axes[0].axis("off")
-for ax, key in zip(axes[1:2].tolist() + axes[3:4].tolist(), CASES):
+fig, axes = plt.subplots(1, 2, figsize=(6.6, 3.8), gridspec_kw={"width_ratios": [1, 0.6]})
+for ax, key in zip(axes, CASES):
     d, c = data[key], CASES[key]
     smooth = preprocessing.smooth_gaussian(d["roi"], c["ws_sigma"])
     _, mask, _ = watershed_seg.run_watershed(smooth, d["markers"], method=c["ws_grad"])
@@ -124,10 +120,6 @@ for ax, key in zip(axes[1:2].tolist() + axes[3:4].tolist(), CASES):
     grad = "Sobel" if c["ws_grad"] == "sobel" else "morph."
     overlay(ax, d["roi"], mask, d["gt"],
             f"{NAMES[key]}: {grad}, σ = {c['ws_sigma']}\nDice = {metrics.dice(mask, d['gt']):.3f}")
-relief = watershed_seg.gradient_map(preprocessing.smooth_gaussian(data["chest"]["roi"], 8), method="morphological")
-axes[2].imshow(relief, cmap="magma")
-axes[2].set_title("Chest: relief (morph. gradient)")
-axes[2].axis("off")
 fig.tight_layout()
 save(fig, "fig4_watershed.png")
 
