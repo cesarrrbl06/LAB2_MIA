@@ -18,7 +18,7 @@ from src import (active_contours, advanced_methods, export_seg, metrics, preproc
 
 OUT = ROOT / "report" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
-plt.rcParams.update({"font.size": 9, "axes.titlesize": 9})
+plt.rcParams.update({"font.size": 11, "axes.titlesize": 11, "legend.fontsize": 9})
 
 # ----------------------------- data and best parameters (notebook) ----------------------------- #
 CASES = {
@@ -88,7 +88,7 @@ for row, key in zip(axes, CASES):
     for ax in row[:2]:
         ax.axvline(T_otsu, color="tab:blue", linestyle="--", label=f"Otsu T = {T_otsu:.3f}")
         ax.axvline(T_best, color="tab:red", linestyle="--", label=f"Best T = {T_best:.3f}")
-        ax.legend(fontsize=7)
+        ax.legend(fontsize=9)
     overlay(row[2], d["roi"], d["roi"] <= T_best, d["gt"], f"Best T: Dice = {max(dices):.3f}")
 fig.tight_layout()
 save(fig, "fig2_thresholding.png")
@@ -102,7 +102,7 @@ for (ax_c, ax_m), key in zip([axes[:2], axes[2:]], CASES):
         ax_c.plot(tols, [metrics.dice(region_growing.region_growing(d["roi"], d["seeds"], t, conn), d["gt"])
                          for t in tols], style, label=f"{conn}-connectivity")
     ax_c.set(title=f"{NAMES[key]}: Dice vs tolerance", xlabel="Tolerance", ylabel="Dice", ylim=(0, 1.02))
-    ax_c.legend(fontsize=7)
+    ax_c.legend(fontsize=9)
     mask = region_growing.region_growing(d["roi"], d["seeds"], c["tol"], c["conn"])
     overlay(ax_m, d["roi"], mask, d["gt"], f"tol = {c['tol']}: Dice = {metrics.dice(mask, d['gt']):.3f}")
     ax_m.plot([s[1] for s in d["seeds"]], [s[0] for s in d["seeds"]], "y+", markersize=8, markeredgewidth=2)
@@ -191,6 +191,6 @@ for ax, key in zip(axes, CASES):
     table.plot(ax=ax, marker="o", legend=(key == "brain"))
     ax.set(title=f"{NAMES[key]}: Dice vs noise", xlabel="Noise standard deviation σ", ylabel="Dice", ylim=(0, 1.02))
     ax.grid(alpha=0.3)
-axes[0].legend(fontsize=7)
+axes[0].legend(fontsize=9)
 fig.tight_layout()
 save(fig, "fig8_noise.png")
